@@ -16,8 +16,6 @@ This dataset contains vector and Lidar data This includes a subset of spatial da
 
 Contents:
 
-*environment.yml file
-
 *Img folder with .png files of images for each site
 
 *lidar-uncertainty.ipynb notebook to load and plot data
@@ -30,7 +28,7 @@ Contents:
 
 *.devcontatiner to load environment (needed to run this repository with github codespaces)
 
-    To set up the earth analytics python environment with the environment.yml file, 
-    follow the instructions on earthdatascience.org:
+To set up the earth analytics python environment needed to run this repository, follow the instructions on earthdatascience.org link below, or open with github codespaces.
+
 https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/
 
