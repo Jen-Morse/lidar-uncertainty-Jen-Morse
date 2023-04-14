@@ -1,6 +1,43 @@
+# Import libraries for NEONDataLoader Class
+import os
+
+import pandas as pd
+import geopandas as gpd
+import rasterstats as rs
+import xarray as xr
+import rioxarray as rxr
+
 class NEONDataLoader:
     """
     Parent class to load NEON tree height data.
+    ----------
+
+    Attributes:
+    ----------
+
+    base_dir_tmpl: str
+        Base directory for data files.
+
+    insitu_path_tmpl: str
+        Path to insitu data files.
+
+    chm_path_tmpl: str
+        Path to LiDAR chm data files.
+
+    plots_path_tmpl: str
+        Path to centroids file.
+
+    site_name: str
+        Site name.
+
+    id_col_name: str
+        ID column name.
+
+    formatting_dict: dict
+        Dictionary to create file paths.
+
+    id_mod: function
+        Modifies ID column to include site name.
     """
 
     base_dir_tmpl = os.path.join(
@@ -52,6 +89,11 @@ class NEONDataLoader:
     def lidar_chm_stats(self):
         """
         Calculate max, mean tree height from LiDAR data.
+        -------
+
+        Returns:
+        -------
+        GeoPandasDataFrame: GeoDataFrame with max and mean tree heights.
         """
         if self._lidar_chm_stats is None:
             plots_gdf = gpd.read_file(self.plots_path)
@@ -67,7 +109,8 @@ class NEONDataLoader:
                 copy_properties=True)
 
             # Create GeoDataFrame
-            self._lidar_chm_stats = gpd.GeoDataFrame.from_features(chm_stats)
+            self._lidar_chm_stats = (
+                gpd.GeoDataFrame.from_features(chm_stats))
 
             # Rename GeoDataFram columns
             self._lidar_chm_stats.rename(
@@ -83,6 +126,10 @@ class NEONDataLoader:
     def insitu_height_stats(self):
         """ 
         Load and calculate insitu max and mean tree height data.
+        -------
+        Returns:
+        -------
+        DataFrame: df with insitu max and mean tree height columns.
         """
         if self._insitu_height_stats is None:
             self._insitu_height_stats = (
@@ -90,13 +137,19 @@ class NEONDataLoader:
                 .groupby('plotid')
                 .stemheight
                 .agg(['max', 'mean'])
-                .rename(columns={'max': 'insitu_max', 'mean': 'insitu_mean'}))
+                .rename(
+                    columns={'max': 'insitu_max',
+                             'mean': 'insitu_mean'}))
         return self._insitu_height_stats
 
     @property
     def height_stats(self):
         """
-        Merge insitu data with LiDar data.
+        Merge insitu data with LiDAR data.
+        -------
+        Returns:
+        -------
+        GeoPandasDataFrame: gdf with merged LiDAR and insitu data.
         """
         if self._height_stats is None:
             self._height_stats = (
